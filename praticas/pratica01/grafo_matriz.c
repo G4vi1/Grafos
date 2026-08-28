@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include "grafo_matriz.h"
 
-/* Grafo não direcionado: a matriz é mantida simétrica
-   (adj[u][v] == adj[v][u]). */
+//Grafo não direcionado 
 
 static int vertice_valido(GrafoMatriz *g, int v) {
     return g != NULL && v >= 0 && v < g->n;
