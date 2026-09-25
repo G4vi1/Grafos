@@ -1,0 +1,29 @@
+CC = gcc
+
+CFLAGS = -Wall -Wextra -std=c11 -g
+
+OBJS = grafo_lista.o dag.o main.o
+
+TARGET = pratica03
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+
+grafo_lista.o: grafo_lista.c grafo_lista.h
+	$(CC) $(CFLAGS) -c grafo_lista.c
+
+dag.o: dag.c dag.h grafo_lista.h
+	$(CC) $(CFLAGS) -c dag.c
+
+main.o: main.c grafo_lista.h dag.h
+	$(CC) $(CFLAGS) -c main.c
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: all clean run
