@@ -114,36 +114,32 @@ git --version
 ## 📂 Estrutura de Pastas do Repositório
 
 Este repositório está organizado da seguinte forma:
-```
-apc-i-template/
-├── .github/         # Template das issues e validador de compilação
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── pratica01.md
-│   │   ├── pratica02.md
-│   │   ├── ...
-│   │   └── pratica10.md
+```text
+Grafos/
+├── .github/
+│   ├── ISSUE_TEMPLATE/   # Enunciados das práticas da disciplina
 │   └── workflows/
 │       └── validar-compilacao.yml
-│
-├── aulas/           # Códigos trabalhados em sala de aula
-│   ├── aula01/
-│   │   └── arquivo.c
-│   ├── aula02/
-│   │   └── arquivo.c
-│   ├── ...
-│   └── .gitkeep
-│
-├── praticas/        # Códigos das atividades práticas
-│   ├── pratica01/
-│   │   └── arquivo.c
-│   ├── pratica02/
-│   │   └── arquivo.c
-│   ├── ...
-│   └── .gitkeep
-│
+├── aulas/
+│   └── aula03/          # Códigos trabalhados em sala
+├── praticas/            # Implementações das atividades práticas
+│   ├── .gitkeep
+│   └── pratica07/       # Bellman-Ford com lista de adjacência
 ├── .gitignore
+├── LICENSE
+├── Makefile.example
 └── README.md
 ```
+
+Esta branch, `pratica-07`, está preparada para a **Prática 07 — Menor Caminho: Bellman-Ford**.
+A implementação está em
+`praticas/pratica07/`, conforme o [enunciado da prática](.github/ISSUE_TEMPLATE/pratica07.md).
+O grafo fica em `grafo_lista.c/.h` e o algoritmo em `bellman_ford.c/.h`.
+Seguindo o exemplo do professor, `bellman_ford(GrafoLista *g, int origem)` usa
+vetores internos, imprime o resultado e retorna 1 no sucesso ou 0 para ciclo
+negativo alcançável (entrada inválida retorna -1). As distâncias usam `long long`
+para evitar overflow nas somas dos pesos. O exemplo em `main.c` demonstra pesos
+negativos, vértice inalcançável e reconstrução de um ciclo negativo.
 
 ## 🔧 Configuração Inicial (realizar apenas uma vez)
 
@@ -170,7 +166,7 @@ Siga estes passos para **cada** atividade:
 
 1. No GitHub, vá na aba **Issues** do seu repositório.
 2. Clique em **New issue**.
-3. Escolha o template da prática (ex: "Prática 01").
+3. Escolha o template da prática (ex: "Prática 07").
 4. Clique em **Submit new issue**.
 5. **Anote o número da Issue** (aparece como `#3`, `#4`, etc.). Você vai usar ele no commit.
 
@@ -181,20 +177,22 @@ Siga estes passos para **cada** atividade:
 No terminal, na **pasta raiz** do repositório:
 
 ```bash
-git checkout -b pratica-01
+git checkout -b pratica-07
 ```
 
+> Nesta cópia, a branch `pratica-07` já existe. Para acessá-la, use `git checkout pratica-07`.
+
 > ⚠️ **Importante:** O nome da branch deve ser exatamente `pratica-XX` (com dois dígitos).  
-> Exemplos válidos: `pratica-01`, `pratica-02`, ..., `pratica-10`.  
-> Exemplos inválidos: `pratica1`, `p01`, `pratica_01`, `feature/pratica-01`.
+> Exemplos válidos: `pratica-02`, `pratica-07`, `pratica-10`.
+> Exemplos inválidos: `pratica1`, `p01`, `pratica_01`, `feature/pratica-07`.
 
 ### 3️⃣ Criar o arquivo da prática
 
-1. No VS Code, dentro da pasta `praticas/`, crie uma nova pasta (ex: `pratica01`).
+1. No VS Code, dentro da pasta `praticas/`, crie uma nova pasta (ex: `pratica07`).
 2. Dentro dela, crie os arquivos `.c` com o código solicitado e o arquivo `Makefile`.
 3. **Teste localmente** antes de enviar:
    ```bash
-   cd praticas/pratica01
+   cd praticas/pratica07
    make
    ./main          # Linux/macOS
    main.exe        # Windows
@@ -205,12 +203,12 @@ git checkout -b pratica-01
 No terminal, na **pasta raiz** do repositório:
 
 ```bash
-git add praticas/pratica01/
-git commit -m "feat: entrega da pratica 01. Refs #3"
-git push origin pratica-01
+git add praticas/pratica07/
+git commit -m "feat: entrega da pratica 07. Refs #3"
+git push origin pratica-07
 ```
 
-> Substitua `pratica01` pelo nome da sua prática e `#3` pelo número da Issue que você abriu.
+> Substitua `pratica07` pelo nome da sua prática e `#3` pelo número da Issue que você abriu.
 
 **Pronto!** Seu código foi enviado para a branch.
 
@@ -218,8 +216,8 @@ git push origin pratica-01
 
 1. No GitHub, acesse seu repositório.
 2. Clique em **"Compare & pull request"** (vai aparecer um banner amarelo).
-3. **Base:** `main` ← **Compare:** `pratica-01`.
-4. Título: `[Entrega] Prática 01 — Representação de Grafos`.
+3. **Base:** `main` ← **Compare:** `pratica-07`.
+4. Título: `[Entrega] Prática 07 — Menor Caminho: Bellman-Ford`.
 5. Descrição: preencha o template e vincule a Issue (ex: `Closes #3`).
 6. Clique em **"Create pull request"**.
 
