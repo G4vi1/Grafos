@@ -1,21 +1,23 @@
 #ifndef GRAFO_LISTA_H
 #define GRAFO_LISTA_H
 
+#define MAX_VERTICES 100
+
 /* Vertices sao numerados de 0 a n-1. */
-typedef struct Aresta {
+typedef struct No {
     int vertice;
     int peso;
-    struct Aresta *proximo;
-} Aresta;
+    struct No *proximo;
+} No;
 
 typedef struct {
-    Aresta **lista;
+    No **lista;
     int num_vertices;
-} GrafoListaPonderado;
+} GrafoLista;
 
-GrafoListaPonderado *criar_grafo(int num_vertices);
+GrafoLista *criar_grafo(int num_vertices);
 /* Insere uma aresta direcionada. Retorna 0 para argumentos invalidos ou falha. */
-int inserir_aresta(GrafoListaPonderado *g, int origem, int destino, int peso);
-void liberar_grafo(GrafoListaPonderado *g);
+int inserir_aresta(GrafoLista *g, int origem, int destino, int peso);
+void liberar_grafo(GrafoLista *g);
 
 #endif

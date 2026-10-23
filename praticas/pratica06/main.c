@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 int main(void) {
-    GrafoListaPonderado *g = criar_grafo(6);
+    GrafoLista *g = criar_grafo(6);
     if (g == NULL) return EXIT_FAILURE;
     const int arestas[][3] = {
         {0, 1, 10}, {0, 2, 3}, {2, 1, 1}, {1, 3, 2},
@@ -16,18 +16,7 @@ int main(void) {
             return EXIT_FAILURE;
         }
     }
-    int dist[6], pred[6];
-    dijkstra(g, 0, dist, pred);
-    for (int destino = 0; destino < g->num_vertices; destino++) {
-        printf("Vertice %d: ", destino);
-        if (dist[destino] == INT_MAX) {
-            puts("inalcancavel");
-        } else {
-            printf("distancia = %d; caminho = ", dist[destino]);
-            reconstruir_caminho(0, destino, pred);
-            putchar('\n');
-        }
-    }
+    dijkstra(g, 0);
     liberar_grafo(g);
     return EXIT_SUCCESS;
 }

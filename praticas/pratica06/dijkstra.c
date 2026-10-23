@@ -1,118 +1,60 @@
 #include "dijkstra.h"
+#include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-MinHeap *criar_min_heap(int capacidade) {
-    if (capacidade <= 0) return NULL;
-    MinHeap *heap = malloc(sizeof(*heap));
-    if (heap == NULL) return NULL;
-    heap->dados = calloc((size_t)capacidade, sizeof(*heap->dados));
-    heap->posicao = calloc((size_t)capacidade, sizeof(*heap->posicao));
-    if (heap->dados == NULL || heap->posicao == NULL) {
-        liberar_min_heap(heap);
-        return NULL;
-    }
-    heap->capacidade = capacidade;
-    heap->tamanho = 0;
-    for (int i = 0; i < capacidade; i++) heap->posicao[i] = -1;
-    return heap;
-}
+void dijkstra(GrafoLista *g, int origem) {
+    if (g == NULL || g->num_vertices <= 0 || g->num_vertices > MAX_VERTICES ||
+        origem < 0 || origem >= g->num_vertices) return;
 
-void liberar_min_heap(MinHeap *heap) {
-    if (heap == NULL) return;
-    free(heap->dados);
-    free(heap->posicao);
-    free(heap);
-}
+    int distancia[MAX_VERTICES];
+    int pred[MAX_VERTICES];
+    int processado[MAX_VERTICES];
+    memset(distancia, -1, sizeof(distancia));
+    memset(pred, -1, sizeof(pred));
+    memset(processado, 0, sizeof(processado));
+    distancia[origem] = 0;
 
-static void trocar(MinHeap *heap, int a, int b) {
-    NoHeap temporario = heap->dados[a];
-    heap->dados[a] = heap->dados[b];
-    heap->dados[b] = temporario;
-    heap->posicao[heap->dados[a].vertice] = a;
-    heap->posicao[heap->dados[b].vertice] = b;
-}
-
-static void subir(MinHeap *heap, int indice) {
-    while (indice > 0) {
-        int pai = (indice - 1) / 2;
-        if (heap->dados[pai].distancia <= heap->dados[indice].distancia) break;
-        trocar(heap, pai, indice);
-        indice = pai;
-    }
-}
-
-int inserir_min_heap(MinHeap *heap, int vertice, int distancia) {
-    if (heap == NULL || vertice < 0 || vertice >= heap->capacidade ||
-        heap->tamanho == heap->capacidade || heap->posicao[vertice] != -1) return 0;
-    int indice = heap->tamanho++;
-    heap->dados[indice] = (NoHeap){vertice, distancia};
-    heap->posicao[vertice] = indice;
-    subir(heap, indice);
-    return 1;
-}
-
-NoHeap extrair_minimo(MinHeap *heap) {
-    if (heap == NULL || heap->tamanho == 0) return (NoHeap){-1, INT_MAX};
-    NoHeap minimo = heap->dados[0];
-    heap->posicao[minimo.vertice] = -1;
-    heap->tamanho--;
-    if (heap->tamanho == 0) return minimo;
-    heap->dados[0] = heap->dados[heap->tamanho];
-    heap->posicao[heap->dados[0].vertice] = 0;
-    int indice = 0;
-    /* Apenas indices anteriores a tamanho/2 possuem filhos. */
-    while (indice < heap->tamanho / 2) {
-        int esquerdo = 2 * indice + 1;
-        int direito = esquerdo + 1;
-        int menor = esquerdo;
-        if (direito < heap->tamanho &&
-            heap->dados[direito].distancia < heap->dados[esquerdo].distancia)
-            menor = direito;
-        if (heap->dados[indice].distancia <= heap->dados[menor].distancia) break;
-        trocar(heap, indice, menor);
-        indice = menor;
-    }
-    return minimo;
-}
-
-void diminuir_chave(MinHeap *heap, int vertice, int distancia) {
-    if (heap == NULL || vertice < 0 || vertice >= heap->capacidade) return;
-    int indice = heap->posicao[vertice];
-    if (indice == -1 || distancia >= heap->dados[indice].distancia) return;
-    heap->dados[indice].distancia = distancia;
-    subir(heap, indice);
-}
-
-void dijkstra(GrafoListaPonderado *g, int origem, int *dist, int *pred) {
-    if (g == NULL || dist == NULL || pred == NULL) return;
     for (int i = 0; i < g->num_vertices; i++) {
-        dist[i] = INT_MAX;
-        pred[i] = -1;
-    }
-    if (origem < 0 || origem >= g->num_vertices) return;
-    MinHeap *heap = criar_min_heap(g->num_vertices);
-    if (heap == NULL) return;
-    dist[origem] = 0;
-    for (int i = 0; i < g->num_vertices; i++) inserir_min_heap(heap, i, dist[i]);
-    while (heap->tamanho > 0) {
-        NoHeap atual = extrair_minimo(heap);
-        if (atual.distancia == INT_MAX) break;
-        int u = atual.vertice;
-        for (Aresta *aresta = g->lista[u]; aresta != NULL; aresta = aresta->proximo) {
-            int v = aresta->vertice;
-            /* Evita overflow antes de somar o custo da aresta. */
-            if (heap->posicao[v] != -1 && aresta->peso < INT_MAX - dist[u]) {
-                int nova_distancia = dist[u] + aresta->peso;
-                if (nova_distancia < dist[v]) {
-                    dist[v] = nova_distancia;
-                    pred[v] = u;
-                    diminuir_chave(heap, v, nova_distancia);
-                }
+        int u = -1;
+        int menor = -1;
+        for (int j = 0; j < g->num_vertices; j++) {
+            /* Distancia -1 significa que o vertice ainda nao foi alcancado. */
+            if (!processado[j] && distancia[j] != -1 &&
+                (menor == -1 || distancia[j] < menor)) {
+                menor = distancia[j];
+                u = j;
             }
         }
+        /* A busca precisa terminar antes de verificar se encontrou um vertice. */
+        if (u == -1) break;
+
+        processado[u] = 1;
+        No *no = g->lista[u];
+        while (no != NULL) {
+            int v = no->vertice;
+            int peso = no->peso;
+            /* Verifica o limite antes da soma para evitar overflow de int. */
+            if (!processado[v] && distancia[u] != -1 &&
+                peso <= INT_MAX - distancia[u] &&
+                (distancia[v] == -1 || distancia[v] > distancia[u] + peso)) {
+                distancia[v] = distancia[u] + peso;
+                pred[v] = u;
+            }
+            no = no->proximo;
+        }
     }
-    liberar_min_heap(heap);
+
+    for (int destino = 0; destino < g->num_vertices; destino++) {
+        printf("Vertice %d: ", destino);
+        if (distancia[destino] == -1) {
+            puts("inalcancavel");
+        } else {
+            printf("distancia = %d; caminho = ", distancia[destino]);
+            reconstruir_caminho(origem, destino, pred);
+            putchar('\n');
+        }
+    }
 }
 
 void reconstruir_caminho(int origem, int destino, int *pred) {
