@@ -1,6 +1,9 @@
 #ifndef COBERTURA_H
 #define COBERTURA_H
 
+#include "grafo_matriz.h"
+#include "grafo_lista.h"
+
 /* Grafo nao direcionado, com vertices numerados de 0 a n-1. */
 typedef struct {
     int u;
@@ -16,5 +19,16 @@ typedef struct {
 int eh_cobertura(const Aresta arestas[], int m, const int cobertura[]);
 int cobertura_gulosa(const Aresta arestas[], int n, int m, int cobertura[]);
 int cobertura_minima_bt(const Aresta arestas[], int n, int m, int cobertura[]);
+
+/* Adaptadores para as estruturas das praticas anteriores. Pesos sao
+ * ignorados; cada chamada extrai as arestas e executa o algoritmo comum.
+ * A lista deve representar um grafo nao direcionado (ambos os sentidos).
+ * Retornam -1 em caso de erro; verificadores retornam 0 ou 1 no sucesso. */
+int cobertura_minima_bt_matriz(const GrafoMatriz *g, int cobertura[]);
+int cobertura_gulosa_matriz(const GrafoMatriz *g, int cobertura[]);
+int eh_cobertura_matriz(const GrafoMatriz *g, const int cobertura[]);
+int cobertura_minima_bt_lista(const GrafoLista *g, int cobertura[]);
+int cobertura_gulosa_lista(const GrafoLista *g, int cobertura[]);
+int eh_cobertura_lista(const GrafoLista *g, const int cobertura[]);
 
 #endif

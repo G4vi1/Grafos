@@ -44,6 +44,28 @@ int main(void) {
             assert(contar(exata, n) == bt && contar(gulosa, n) == gr);
             assert(eh_cobertura(arestas, m, exata));
             assert(eh_cobertura(arestas, m, gulosa));
+            if (n > 0) {
+                GrafoMatriz *matriz = criar_grafo_matriz(n);
+                GrafoLista *lista = criar_grafo(n);
+                assert(matriz != NULL && lista != NULL);
+                for (int a = 0; a < m; a++) {
+                    int u = arestas[a].u, v = arestas[a].v;
+                    /* Peso zero deve continuar representando uma aresta. */
+                    assert(inserir_aresta_matriz(matriz, u, v, 0));
+                    assert(inserir_aresta(lista, u, v, 0));
+                    if (u != v) assert(inserir_aresta(lista, v, u, 0));
+                }
+                assert(cobertura_minima_bt_matriz(matriz, exata) == bt);
+                assert(eh_cobertura_matriz(matriz, exata) == 1);
+                assert(cobertura_gulosa_matriz(matriz, gulosa) == gr);
+                assert(eh_cobertura_matriz(matriz, gulosa) == 1);
+                assert(cobertura_minima_bt_lista(lista, exata) == bt);
+                assert(eh_cobertura_lista(lista, exata) == 1);
+                assert(cobertura_gulosa_lista(lista, gulosa) == gr);
+                assert(eh_cobertura_lista(lista, gulosa) == 1);
+                liberar_grafo_matriz(matriz);
+                liberar_grafo(lista);
+            }
             casos++;
         }
     }
@@ -57,6 +79,9 @@ int main(void) {
     assert(cobertura_gulosa(NULL, -1, 0, gulosa) == -1);
     assert(eh_cobertura(NULL, 0, NULL));
     assert(!eh_cobertura(NULL, 1, NULL));
+    assert(cobertura_minima_bt_matriz(NULL, exata) == -1);
+    assert(cobertura_gulosa_lista(NULL, gulosa) == -1);
+    assert(eh_cobertura_matriz(NULL, exata) == -1);
     printf("OK: %u grafos e casos de entrada validados.\n", casos);
     return 0;
 }
